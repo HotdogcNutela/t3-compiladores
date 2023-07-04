@@ -1,0 +1,5 @@
+alguma-semantico/target/*
+.vscode/*
+alguma-semantico/src/main/antlr4/br/dc/compiladores/alguma/semantico/.antlr/*
+*.jar
+output.txt

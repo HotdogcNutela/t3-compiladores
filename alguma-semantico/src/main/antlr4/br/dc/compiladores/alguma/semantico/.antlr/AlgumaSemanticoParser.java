@@ -1,4 +1,4 @@
-// Generated from c:\Compiladores\T3\t3-compiladores\alguma-semantico\src\main\antlr\br\dc\compiladores\alguma\semantico\AlgumaSemantico.g4 by ANTLR 4.9.2
+// Generated from c:\Compiladores\T3\t3-compiladores\alguma-semantico\src\main\antlr4\br\dc\compiladores\alguma\semantico\AlgumaSemantico.g4 by ANTLR 4.9.2
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;

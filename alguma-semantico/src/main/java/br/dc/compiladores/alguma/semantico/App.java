@@ -1,4 +1,4 @@
-package br.dc.compiladores.alguma.sintatico;
+package br.dc.compiladores.alguma.semantico;
 
 /**
  * Hello world!

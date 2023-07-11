@@ -67,14 +67,17 @@ public class AlgumaSemantico extends AlgumaBaseVisitor<Void> {
     @Override
     public Void visitCmdLeia(AlgumaParser.CmdLeiaContext ctx){
         for (var v : ctx.identificador()){
+            boolean foiDeclarado = false;
             for (TabelaDeSimbolos t : pilhaDeTabelas.percorrerEscoposAninhados()){
                 if (t.existe(v.getText())){
-                    return null;            
+                    foiDeclarado = true;            
                 }
             }
-            // Reporta erro de variável não existente
-            erroSemantico = "identificador "+v.getText()+" nao declarado";
-            AlgumaSemanticoUtils.adicionarErroSemantico(ctx.start, erroSemantico);
+            if (!foiDeclarado){
+                // Reporta erro de variável não existente
+                erroSemantico = "identificador "+v.getText()+" nao declarado";
+                AlgumaSemanticoUtils.adicionarErroSemantico(ctx.start, erroSemantico);
+            }
         }
 
         return null;

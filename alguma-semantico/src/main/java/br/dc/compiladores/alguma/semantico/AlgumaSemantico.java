@@ -4,7 +4,7 @@ import br.dc.compiladores.alguma.semantico.TabelaDeSimbolos.TipoAlguma;
 
 public class AlgumaSemantico extends AlgumaBaseVisitor<Void> {
 
-    Escopos pilhaDeTabelas;
+    Escopos pilhaDeTabelas = new Escopos();
     String erroSemantico;
 
     @Override
@@ -30,7 +30,7 @@ public class AlgumaSemantico extends AlgumaBaseVisitor<Void> {
             if (!AlgumaSemanticoUtils.ehTipoBasico(srtTipoVar)){
                 // Reporta erro de tipo inexistente
                 erroSemantico = "tipo "+srtTipoVar+" nao declarado";
-                AlgumaSemanticoUtils.adicionarErroSemantico(ctx.start, erroSemantico);
+                AlgumaSemanticoUtils.adicionarErroSemantico(ctx.v1.start, erroSemantico);
             }
             TipoAlguma tipoVar = TipoAlguma.INVALIDO;
             switch(srtTipoVar){

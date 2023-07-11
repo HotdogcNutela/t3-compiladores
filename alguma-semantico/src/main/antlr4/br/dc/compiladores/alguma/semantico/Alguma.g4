@@ -27,7 +27,7 @@ WS 	:	( ' ' |'\t' | '\r' | '\n') {skip();}
 	;
 
 
-programa: declaracoes* 'algoritmo' corpo 'fim-algoritmo';
+programa: declaracoes* 'algoritmo' corpo 'fim_algoritmo';
 declaracoes: declaracao_local | declaracao_global;
 declaracao_local: 'declare' v1=variavel
 		| 'constante' v2=IDENT ':' tipo_basico '=' valor_constante

@@ -26,14 +26,14 @@ public class AlgumaSemanticoUtils {
         return false;
     }
 
-    public static TabelaDeSimbolos.TipoAlguma verificarTipo(TabelaDeSimbolos tabela, AlgumaParser.Exp_aritmeticaContext ctx) {
+    public static TipoAlguma verificarTipo(Escopos pilhaDeTabelas, AlgumaParser.ExpressaoContext ctx){
         TabelaDeSimbolos.TipoAlguma ret = null;
-        for (var ta : ctx.termo()) {
-            TabelaDeSimbolos.TipoAlguma aux = verificarTipo(tabela, ta);
+        for (var tl : ctx.termo_logico()) {
+            TabelaDeSimbolos.TipoAlguma aux = verificarTipo(pilhaDeTabelas, tl);
             if (ret == null) {
                 ret = aux;
             } else if (ret != aux && aux != TabelaDeSimbolos.TipoAlguma.INVALIDO) {
-                adicionarErroSemantico(ctx.start, "Expressão " + ctx.getText() + " contém tipos incompatíveis");
+                //adicionarErroSemantico(ctx.start, "Expressão " + ctx.getText() + " contém tipos incompatíveis");
                 ret = TabelaDeSimbolos.TipoAlguma.INVALIDO;
             }
         }
@@ -41,65 +41,136 @@ public class AlgumaSemanticoUtils {
         return ret;
     }
 
-    public static TabelaDeSimbolos.TipoAlguma verificarTipo(TabelaDeSimbolos tabela, AlgumaParser.TermoContext ctx) {
+    public static TipoAlguma verificarTipo(Escopos pilhaDeTabelas, AlgumaParser.Termo_logicoContext ctx){
+        TabelaDeSimbolos.TipoAlguma ret = null;
+        for (var fl : ctx.fator_logico()) {
+            TabelaDeSimbolos.TipoAlguma aux = verificarTipo(pilhaDeTabelas, fl);
+            if (ret == null) {
+                ret = aux;
+            } else if (ret != aux && aux != TabelaDeSimbolos.TipoAlguma.INVALIDO) {
+                //adicionarErroSemantico(ctx.start, "Expressão " + ctx.getText() + " contém tipos incompatíveis");
+                ret = TabelaDeSimbolos.TipoAlguma.INVALIDO;
+            }
+        }
+
+        return ret;
+    }
+
+    public static TipoAlguma verificarTipo(Escopos pilhaDeTabelas, AlgumaParser.Fator_logicoContext ctx){
+        return verificarTipo(pilhaDeTabelas, ctx.parcela_logica());
+    }
+
+    public static TipoAlguma verificarTipo(Escopos pilhaDetabelas, AlgumaParser.Parcela_logicaContext ctx){
+        if (ctx.pl1 != null){
+            return TipoAlguma.LOGICO;
+        }else { // ctx.pl2 != null
+            return verificarTipo(pilhaDetabelas, ctx.pl2);
+        }
+    }
+
+    public static TipoAlguma verificarTipo(Escopos pilhaDeTabelas, AlgumaParser.Exp_relacionalContext ctx){
+        if (ctx.op_relacional() != null){
+            return TipoAlguma.LOGICO;
+        } else{
+            return verificarTipo(pilhaDeTabelas, ctx.exp_aritmetica(0));
+        }
+    }
+
+    public static TabelaDeSimbolos.TipoAlguma verificarTipo(Escopos pilhaDeTabelas, AlgumaParser.Exp_aritmeticaContext ctx) {
+        TabelaDeSimbolos.TipoAlguma ret = null;
+        for (var ta : ctx.termo()) {
+            TabelaDeSimbolos.TipoAlguma aux = verificarTipo(pilhaDeTabelas, ta);
+            if (ret == null) {
+                ret = aux;
+            } else if (ret != aux && aux != TabelaDeSimbolos.TipoAlguma.INVALIDO) {
+                //adicionarErroSemantico(ctx.start, "Expressão " + ctx.getText() + " contém tipos incompatíveis");
+                ret = TabelaDeSimbolos.TipoAlguma.INVALIDO;
+            }
+        }
+
+        return ret;
+    }
+
+    public static TabelaDeSimbolos.TipoAlguma verificarTipo(Escopos pilhaDeTabelas, AlgumaParser.TermoContext ctx) {
         TabelaDeSimbolos.TipoAlguma ret = null;
 
         for (var fa : ctx.fator()) {
-            TabelaDeSimbolos.TipoAlguma aux = verificarTipo(tabela, fa);
+            TabelaDeSimbolos.TipoAlguma aux = verificarTipo(pilhaDeTabelas, fa);
             if (ret == null) {
                 ret = aux;
             } else if (ret != aux && aux != TabelaDeSimbolos.TipoAlguma.INVALIDO) {
-                adicionarErroSemantico(ctx.start, "Termo " + ctx.getText() + " contém tipos incompatíveis");
+                //adicionarErroSemantico(ctx.start, "Termo " + ctx.getText() + " contém tipos incompatíveis");
                 ret = TabelaDeSimbolos.TipoAlguma.INVALIDO;
             }
         }
         return ret;
     }
 
-    public static TabelaDeSimbolos.TipoAlguma verificarTipo(TabelaDeSimbolos tabela, AlgumaParser.FatorContext ctx){
+    public static TabelaDeSimbolos.TipoAlguma verificarTipo(Escopos pilhaDeTabelas, AlgumaParser.FatorContext ctx){
         TabelaDeSimbolos.TipoAlguma ret = null;
 
         for (var pa : ctx.parcela()) {
-            TabelaDeSimbolos.TipoAlguma aux = verificarTipo(tabela, pa);
+            TabelaDeSimbolos.TipoAlguma aux = verificarTipo(pilhaDeTabelas, pa);
             if (ret == null) {
                 ret = aux;
             } else if (ret != aux && aux != TabelaDeSimbolos.TipoAlguma.INVALIDO) {
-                adicionarErroSemantico(ctx.start, "Termo " + ctx.getText() + " contém tipos incompatíveis");
+                //adicionarErroSemantico(ctx.start, "Fator " + ctx.getText() + " contém tipos incompatíveis");
                 ret = TabelaDeSimbolos.TipoAlguma.INVALIDO;
             }
         }
         return ret;
     }
+    
+    public static TipoAlguma verificarTipo(Escopos pilhaDeTabelas, AlgumaParser.ParcelaContext ctx){
+        if (ctx.parcela_unario() != null){
+            return verificarTipo(pilhaDeTabelas, ctx.parcela_unario());
+        } else{ // ctx.parcela_nao_unario() != null
+            return verificarTipo(pilhaDeTabelas, ctx.parcela_nao_unario());
+        }
+    }
 
-    public static TabelaDeSimbolos.TipoAlguma verificarTipo(TabelaDeSimbolos tabela, AlgumaParser.ParcelaContext ctx){
-        if (ctx.parcela_unario().NUM_INT() != null){
+    public static TipoAlguma verificarTipo(Escopos pilhaDeTabelas, AlgumaParser.Parcela_nao_unarioContext ctx){
+        if (ctx.pn1 != null){
+            return verificarTipo(pilhaDeTabelas.obterEscopoAtual(), ctx.pn1.getText());
+        } else{ // ctx.pn2 != null
+            return TipoAlguma.LITERAL;
+        }
+    }
+
+    public static TipoAlguma verificarTipo(Escopos pilhaDeTabelas, AlgumaParser.Parcela_unarioContext ctx){
+        if (ctx.p1 != null){
+            String nomeId = ctx.p1.getText();
+            for (var t : pilhaDeTabelas.percorrerEscoposAninhados()){
+                if (t.existe(nomeId)){
+                    return verificarTipo(t, nomeId);
+                }
+            }
+            // Identidade nomeId não foi encontrado
+            // Reporta erro de identidade inexistente
+            // WIP
+            return TipoAlguma.INVALIDO;
+        }
+        if (ctx.p2 != null){
+            String nomeId = ctx.p2.getText();
+            for (var t : pilhaDeTabelas.percorrerEscoposAninhados()){
+                if (t.existe(nomeId)){
+                    return verificarTipo(t, nomeId);
+                }
+            }
+            // Identidade nomeId não foi encontrado
+            // Reporta erro de identidade inexistente
+            // WIP
+            return TipoAlguma.INVALIDO;
+        }
+        if (ctx.p3 != null){
             return TabelaDeSimbolos.TipoAlguma.INTEIRO;
         }
-        if (ctx.parcela_unario().NUM_REAL() != null){
+        if (ctx.p4 != null){
             return TabelaDeSimbolos.TipoAlguma.REAL;
-        }
-        if (ctx.parcela_unario().IDENT() != null){
-            String nomeVar = ctx.parcela_unario().IDENT().getText();
-            if (!tabela.existe(nomeVar)){
-                // Reporta erro de variável inexistente
-                // WIP
-                return TabelaDeSimbolos.TipoAlguma.INVALIDO;
-            }
-            return verificarTipo(tabela, nomeVar);
-        }
-        if (ctx.parcela_unario().p1 != null){
-            String nomeVar = ctx.parcela_unario().identificador().IDENT(0).getText();
-            if (!tabela.existe(nomeVar)){
-                // Reporta erro de variável inexistente
-                // WIP
-                return TabelaDeSimbolos.TipoAlguma.INVALIDO;
-            }
-            return verificarTipo(tabela, nomeVar);
         }
 
         // Se não for nenhum dos tipos acimas, é porque é uma expressão entre parênteses
-        return verificarTipo(tabela, ctx.parcela_unario().expressao(0).termo_logico(0)
-                .fator_logico(0).parcela_logica().exp_relacional().exp_aritmetica(0));
+        return verificarTipo(pilhaDeTabelas, ctx.p5);
     }
 
     public static TabelaDeSimbolos.TipoAlguma verificarTipo(TabelaDeSimbolos tabela, String nomeVar) {

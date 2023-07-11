@@ -34,16 +34,16 @@ public class AlgumaSemantico extends AlgumaBaseVisitor<Void> {
             }
             TipoAlguma tipoVar = TipoAlguma.INVALIDO;
             switch(srtTipoVar){
-                case "LITERAL":
+                case "literal":
                     tipoVar = TipoAlguma.LITERAL;
                     break;
-                case "INTEIRO":
+                case "inteiro":
                     tipoVar = TipoAlguma.INTEIRO;
                     break;
-                case "REAL":
+                case "real":
                     tipoVar = TipoAlguma.REAL;
                     break;
-                case "LOGICO":
+                case "logico":
                     tipoVar = TipoAlguma.LOGICO;
                     break;
                 default:
@@ -51,7 +51,13 @@ public class AlgumaSemantico extends AlgumaBaseVisitor<Void> {
                     break;
             }
             for (var v : ctx.v1.identificador()){
-                escopoAtual.adicionar(v.getText(), tipoVar);
+                if (escopoAtual.existe(v.getText())){
+                    // Reporta erro de variável já existente
+                    erroSemantico = "identificador "+v.getText()+" ja declarado anteriormente";
+                    AlgumaSemanticoUtils.adicionarErroSemantico(v.start, erroSemantico);
+                } else{
+                    escopoAtual.adicionar(v.getText(), tipoVar);
+                }
             }
         } else if (ctx.v2 != null){
             // WIP
@@ -82,22 +88,53 @@ public class AlgumaSemantico extends AlgumaBaseVisitor<Void> {
 
         return null;
     }
-
-    /* 
+ 
     @Override
     public Void visitCmdEscreva(AlgumaParser.CmdEscrevaContext ctx){
-        
+        for (var e : ctx.expressao()){
+            visitExpressao(e);
+        }
 
-        return super.visitCmdEscreva(ctx);
+        return null;
+    }    
+
+    @Override
+    public Void visitCmdAtribuicao(AlgumaParser.CmdAtribuicaoContext ctx)
+    { 
+        TipoAlguma tipoExpressao = AlgumaSemanticoUtils.verificarTipo(pilhaDeTabelas, ctx.expressao());
+        TipoAlguma tipoId = pilhaDeTabelas.obterEscopoAtual().verificar(ctx.identificador().getText());
+
+        if (tipoExpressao.equals(tipoId)){
+            return null;
+        } else{
+            erroSemantico = "atribuicao nao compativel para "+ctx.identificador().getText();
+            AlgumaSemanticoUtils.adicionarErroSemantico(ctx.start, erroSemantico);
+        }
+
+        return null; 
     }
-    */
 
-    /* 
+    @Override
+    public Void visitParcela_unario(AlgumaParser.Parcela_unarioContext ctx){
+        if (ctx.p1 != null){
+            String nomeId = ctx.p1.getText();
+            for (var t : pilhaDeTabelas.percorrerEscoposAninhados()){
+                if (t.existe(nomeId)){
+                    return null;
+                }
+            }
+            // Reporta erro de variável não existente
+            erroSemantico = "identificador "+nomeId+" nao declarado";
+            AlgumaSemanticoUtils.adicionarErroSemantico(ctx.p1.start, erroSemantico);
+        }
+        return null;
+    }
+
+     
     @Override
     public Void visitExp_aritmetica(AlgumaParser.Exp_aritmeticaContext ctx){
-        AlgumaSemanticoUtils.verificarTipo(tabela, ctx);
+        AlgumaSemanticoUtils.verificarTipo(pilhaDeTabelas, ctx);
 
         return super.visitExp_aritmetica(ctx);
     }
-    */
 }

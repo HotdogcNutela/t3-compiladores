@@ -5,8 +5,10 @@ import java.util.Map;
 
 public class TabelaDeSimbolos {
     public enum TipoAlguma {
+        LITERAL,
         INTEIRO,
         REAL,
+        LOGICO,
         INVALIDO
     }
     

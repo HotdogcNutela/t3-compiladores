@@ -104,7 +104,7 @@ public class AlgumaSemantico extends AlgumaBaseVisitor<Void> {
         TipoAlguma tipoExpressao = AlgumaSemanticoUtils.verificarTipo(pilhaDeTabelas, ctx.expressao());
         TipoAlguma tipoId = pilhaDeTabelas.obterEscopoAtual().verificar(ctx.identificador().getText());
 
-        if (tipoExpressao.equals(tipoId)){
+        if (tipoExpressao.equals(tipoId) || AlgumaSemanticoUtils.ehTipoInteiroEmReal(tipoId, tipoExpressao)){
             return null;
         } else{
             erroSemantico = "atribuicao nao compativel para "+ctx.identificador().getText();

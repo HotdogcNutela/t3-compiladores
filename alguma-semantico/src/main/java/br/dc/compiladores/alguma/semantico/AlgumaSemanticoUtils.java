@@ -26,6 +26,28 @@ public class AlgumaSemanticoUtils {
         return false;
     }
 
+    // Função para evitar que operações entre valores de tipo real e inteiro
+    // resultem em erro
+    public static boolean ehTipoNumeral(TipoAlguma ret, TipoAlguma aux){
+        if (ret.equals(TipoAlguma.INTEIRO) && aux.equals(TipoAlguma.REAL)){
+            return true;
+        }else if (aux.equals(TipoAlguma.INTEIRO) && ret.equals(TipoAlguma.REAL)){
+            return true;
+        }
+        
+        return false;
+    }
+
+    // Função semelhante a ehTipoNumeral, mas somente para atribuição 
+    // do tipo REAL <- INTEIRO
+    public static boolean ehTipoInteiroEmReal(TipoAlguma ret, TipoAlguma aux){
+        if (aux.equals(TipoAlguma.INTEIRO) && ret.equals(TipoAlguma.REAL)){
+            return true;
+        }
+        
+        return false;
+    }
+
     public static TipoAlguma verificarTipo(Escopos pilhaDeTabelas, AlgumaParser.ExpressaoContext ctx){
         TabelaDeSimbolos.TipoAlguma ret = null;
         for (var tl : ctx.termo_logico()) {
@@ -83,6 +105,9 @@ public class AlgumaSemanticoUtils {
             if (ret == null) {
                 ret = aux;
             } else if (ret != aux && aux != TabelaDeSimbolos.TipoAlguma.INVALIDO) {
+                if (ehTipoNumeral(ret, aux)){
+                    continue;
+                }
                 //adicionarErroSemantico(ctx.start, "Expressão " + ctx.getText() + " contém tipos incompatíveis");
                 ret = TabelaDeSimbolos.TipoAlguma.INVALIDO;
             }
@@ -99,6 +124,9 @@ public class AlgumaSemanticoUtils {
             if (ret == null) {
                 ret = aux;
             } else if (ret != aux && aux != TabelaDeSimbolos.TipoAlguma.INVALIDO) {
+                if (ehTipoNumeral(ret, aux)){
+                    continue;
+                }
                 //adicionarErroSemantico(ctx.start, "Termo " + ctx.getText() + " contém tipos incompatíveis");
                 ret = TabelaDeSimbolos.TipoAlguma.INVALIDO;
             }
@@ -114,6 +142,9 @@ public class AlgumaSemanticoUtils {
             if (ret == null) {
                 ret = aux;
             } else if (ret != aux && aux != TabelaDeSimbolos.TipoAlguma.INVALIDO) {
+                if (ehTipoNumeral(ret, aux)){
+                    continue;
+                }
                 //adicionarErroSemantico(ctx.start, "Fator " + ctx.getText() + " contém tipos incompatíveis");
                 ret = TabelaDeSimbolos.TipoAlguma.INVALIDO;
             }
